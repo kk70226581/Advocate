@@ -49,7 +49,7 @@ const App = ({ advocatePosts, resources, blogPosts }) => {
     setSubmissionStatus('submitting');
     console.log('Contact Form submitted:', formData);
 
-    const recipientEmail = 'nitishkumar961657@gmail.com'; // <--- UPDATED THIS EMAIL
+    const recipientEmail = 'nitishkumar961657@gmail.com';
     const subject = encodeURIComponent(`Inquiry from ${formData.name}: ${formData.subject}`);
     const body = encodeURIComponent(
       `Name: ${formData.name}\n` +
@@ -64,7 +64,7 @@ const App = ({ advocatePosts, resources, blogPosts }) => {
       await new Promise(resolve => setTimeout(resolve, 500));
 
       setSubmissionStatus('success');
-      setFormData({ name: '', email: '', subject: '', message: '' }); // Clear form
+      setFormData({ name: '', email: '', subject: '', message: '' });
       alert("Please send the email from your mail client. Your message has been prepared.");
 
     } catch (error) {
@@ -75,10 +75,10 @@ const App = ({ advocatePosts, resources, blogPosts }) => {
   };
 
   const advocate = {
-    name: "Adv. Nitish Kumar Bhardwaj", // Full name from business card
-    tagline: "Your Trusted Legal Partner for Justice and Resolution", // Retained
-    bio: `With over 15 years of dedicated experience in diverse legal fields including corporate law, family law, criminal defense, and intellectual property, Advocate Nitish Kumar Bhardwaj is committed to providing exceptional legal counsel and representation. His academic background includes B.A. LLB (Hons.). His enrollment details include ID ${"AY-8296"} (Enrollment No. ${"UP08552/25"}) with the Bar Council of U.P., enrolled on ${"March 5, 2025"} (Born on ${"July 2, 2002"}). His practice is built on a foundation of integrity, client-focused solutions, and a relentless pursuit of justice. We understand that legal challenges can be daunting, and we are here to guide you through every step with clarity and confidence.`, // Updated bio to include ID details
-    specialties: [ // Retained existing specialties, customize as needed
+    name: "Adv. Nitish Kumar Bhardwaj",
+    tagline: "Your Trusted Legal Partner for Justice and Resolution",
+    bio: `With over 15 years of dedicated experience in diverse legal fields including corporate law, family law, criminal defense, and intellectual property, Advocate Nitish Kumar Bhardwaj is committed to providing exceptional legal counsel and representation. His academic background includes B.A. LLB (Hons.). His enrollment details include ID ${"AY-8296"} (Enrollment No. ${"UP08552/25"}) with the Bar Council of U.P., enrolled on ${"March 5, 2025"} (Born on ${"July 2, 2002"}). His practice is built on a foundation of integrity, client-focused solutions, and a relentless pursuit of justice. We understand that legal challenges can be daunting, and we are here to guide you through every step with clarity and confidence.`,
+    specialties: [
       "Corporate Law & Business Litigation",
       "Family Law & Divorce",
       "Criminal Defense",
@@ -89,27 +89,26 @@ const App = ({ advocatePosts, resources, blogPosts }) => {
       "Environmental Law"
     ],
     contact: {
-      phone1: "+91-9616577276", // First phone number from business card
-      phone2: "+91-6387424388", // Second phone number from business card
-      email: "info@youradvocate.com", // Keeping placeholder as not explicitly provided on cards
-      officeAddress: "Office-Diwani Kachahari, Sthayi Lok Adalat Ke Paas, Gorakhpur, Uttar Pradesh", // From business card
-      fullAddress: "H. No. 01 Sonawal, P.O. Piprahi, P.S. Shyamdeurawa, Maharanjganj, Gorakhpur, Uttar Pradesh, India - 273001", // Detailed address from ID card (assumed Gorakhpur Pincode 273001)
-      mapLink: "https://www.google.com/maps/search/Diwani+Kachahari+Gorakhpur" // More plausible Google Maps search link
+      phone1: "+91-9616577276",
+      phone2: "+91-6387424388",
+      email: "info@youradvocate.com",
+      officeAddress: "Office-Diwani Kachahari, Sthayi Lok Adalat Ke Paas, Gorakhpur, Uttar Pradesh",
+      fullAddress: "H. No. 01 Sonawal, P.O. Piprahi, P.S. Shyamdeurawa, Maharanjganj, Gorakhpur, Uttar Pradesh, India - 273001",
+      mapLink: "https://www.google.com/maps/search/Diwani+Kachahari+Gorakhpur"
     },
-    social: { // Keeping placeholders as not explicitly provided on cards
+    social: {
       facebook: "https://facebook.com/youradvocate",
       twitter: "https://twitter.com/youradvocate",
       linkedin: "https://linkedin.com/in/youradvocate",
       instagram: "https://instagram.com/youradvocate"
     },
-    // Additional details for internal reference/future use:
     idCardDetails: {
       idNumber: "AY-8296",
       enrollmentNumber: "UP08552/25",
-      enrollmentDate: "05/03/2025", // March 5, 2025
-      dateOfBirth: "02/07/2002", // July 2, 2002
+      enrollmentDate: "05/03/2025",
+      dateOfBirth: "02/07/2002",
       barCouncil: "Bar Council of U.P.",
-      fatherHusbandName: "Parmaatma" // From ID card
+      fatherHusbandName: "Parmaatma"
     }
   };
 
@@ -233,7 +232,7 @@ const App = ({ advocatePosts, resources, blogPosts }) => {
           <div className="flex flex-col md:flex-row items-center md:space-x-12">
             <div className="md:w-1/2 mb-8 md:mb-0">
               <img
-                src="/images/advocate.jpg"
+                src={`${process.env.PUBLIC_URL}/images/Advocate.jpg`} // Using PUBLIC_URL for images in public folder
                 alt="Advocate Profile"
                 className="rounded-lg shadow-xl w-full h-auto object-cover transform transition-transform duration-500 hover:scale-105"
               />
@@ -288,7 +287,6 @@ const App = ({ advocatePosts, resources, blogPosts }) => {
                     <span className="flex items-center"><Clock className="w-4 h-4 mr-1" /> {post.readTime}</span>
                   </div>
                   <p className="text-gray-300 mb-4">{post.excerpt}</p>
-                  {/* Link to the dynamic blog post detail page */}
                   <Link to={`/blog/${post._id}`} className="text-teal-400 hover:underline font-medium flex items-center">
                     Read More <ChevronRight className="w-4 h-4 ml-1" />
                   </Link>
@@ -297,7 +295,6 @@ const App = ({ advocatePosts, resources, blogPosts }) => {
             ))}
           </div>
           <div className="text-center mt-12">
-            {/* The "View All Posts" button now links to the main blog list route */}
             <Link to="/blog" className="inline-flex items-center bg-teal-500 text-gray-900 hover:bg-teal-600 px-8 py-4 rounded-full text-lg font-semibold shadow-md transition-all duration-300 transform hover:scale-105">
               View All Posts <ChevronRight className="ml-2 w-5 h-5" />
             </Link>
