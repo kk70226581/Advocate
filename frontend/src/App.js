@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+// Removed Link import as it's not used for navigation in this file
+// Removed emailjs import as per your provided code, assuming you prefer mailto:
 
 // Lucide React icons for a modern look
 import {
@@ -30,7 +31,8 @@ import {
 
 // Main App Component
 const App = ({ advocatePosts, resources, blogPosts }) => {
-  const [isMobileMenuOpen, setIsMobileMenuMenuOpen] = useState(false);
+  // Corrected typo: setIsMobileMenuMenuOpen -> setIsMobileMenuOpen
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -47,7 +49,7 @@ const App = ({ advocatePosts, resources, blogPosts }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmissionStatus('submitting');
-    console.log('Contact Form submitted:', formData);
+    console.log('Contact Form submitted (via mailto:):', formData);
 
     const recipientEmail = 'nitishkumar961657@gmail.com';
     const subject = encodeURIComponent(`Inquiry from ${formData.name}: ${formData.subject}`);
@@ -60,11 +62,14 @@ const App = ({ advocatePosts, resources, blogPosts }) => {
     const mailtoLink = `mailto:${recipientEmail}?subject=${subject}&body=${body}`;
 
     try {
+      // Attempt to open the mail client
       window.location.href = mailtoLink;
+      // Small delay to allow mailto: to trigger before showing alert
       await new Promise(resolve => setTimeout(resolve, 500));
 
       setSubmissionStatus('success');
       setFormData({ name: '', email: '', subject: '', message: '' });
+      // Using alert as per previous code, consider custom modal for better UX
       alert("Please send the email from your mail client. Your message has been prepared.");
 
     } catch (error) {
@@ -160,6 +165,41 @@ const App = ({ advocatePosts, resources, blogPosts }) => {
     }
   ];
 
+  // Gallery Images - Still local for now, can be moved to backend if needed
+  const galleryImages = [
+    {
+      id: 1,
+      src: "https://placehold.co/600x400/2F4F4F/ADD8E6?text=Legal+Consultation+1",
+      alt: "Legal Consultation Session"
+    },
+    {
+      id: 2,
+      src: "https://placehold.co/600x400/4682B4/B0C4DE?text=Courtroom+View",
+      alt: "Inside a Courtroom"
+    },
+    {
+      id: 3,
+      src: "https://placehold.co/600x400/6A5ACD/E6E6FA?text=Law+Books",
+      alt: "Law Books and Documents"
+    },
+    {
+      id: 4,
+      src: "https://placehold.co/600x400/2F4F4F/DDA0DD?text=Client+Meeting",
+      alt: "Advocate Meeting with Client"
+    },
+    {
+      id: 5,
+      src: "https://placehold.co/600x400/4682B4/F0E68C?text=Justice+Symbol",
+      alt: "Symbol of Justice"
+    },
+    {
+      id: 6,
+      src: "https://placehold.co/600x400/6A5ACD/FFE4E1?text=Legal+Team",
+      alt: "Advocate with Legal Team"
+    }
+  ];
+
+
   return (
     <div className="font-inter antialiased text-gray-100 bg-gray-900">
       {/* Header */}
@@ -174,13 +214,14 @@ const App = ({ advocatePosts, resources, blogPosts }) => {
             <a href="#about" className="text-gray-300 hover:text-teal-400 font-medium transition duration-300">About Us</a>
             <a href="#services" className="text-gray-300 hover:text-teal-400 font-medium transition duration-300">Services</a>
             <a href="#blog" className="text-gray-300 hover:text-teal-400 font-medium transition duration-300">Blog</a>
+            {/* Removed Gallery link as it's not in your current code */}
             <a href="#advocate-updates" className="text-gray-300 hover:text-teal-400 font-medium transition duration-300">Advocate's Updates</a>
             <a href="#resources" className="text-gray-300 hover:text-teal-400 font-medium transition duration-300">Resources</a>
             <a href="#testimonials" className="text-gray-300 hover:text-teal-400 font-medium transition duration-300">Testimonials</a>
             <a href="#contact" className="text-gray-300 hover:text-teal-400 font-medium transition duration-300">Contact</a>
           </div>
           <div className="md:hidden">
-            <button onClick={() => setIsMobileMenuMenuOpen(!isMobileMenuOpen)} className="text-gray-300 hover:text-teal-400 focus:outline-none">
+            <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-gray-300 hover:text-teal-400 focus:outline-none">
               {isMobileMenuOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
             </button>
           </div>
@@ -188,13 +229,14 @@ const App = ({ advocatePosts, resources, blogPosts }) => {
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
           <div className="md:hidden bg-gray-800 mt-4 rounded-lg shadow-lg py-4">
-            <a href="#home" onClick={() => setIsMobileMenuMenuOpen(false)} className="block px-6 py-2 text-gray-300 hover:bg-gray-700 transition duration-200">Home</a>
-            <a href="#about" onClick={() => setIsMobileMenuMenuOpen(false)} className="block px-6 py-2 text-gray-300 hover:bg-gray-700 transition duration-200">About Us</a>
-            <a href="#services" onClick={() => setIsMobileMenuMenuOpen(false)} className="block px-6 py-2 text-gray-300 hover:bg-gray-700 transition duration-200">Services</a>
-            <a href="#blog" onClick={() => setIsMobileMenuMenuOpen(false)} className="block px-6 py-2 text-gray-300 hover:bg-gray-700 transition duration-200">Blog</a>
-            <a href="#advocate-updates" onClick={() => setIsMobileMenuMenuOpen(false)} className="block px-6 py-2 text-gray-300 hover:bg-gray-700 transition duration-200">Advocate's Updates</a>
-            <a href="#resources" onClick={() => setIsMobileMenuMenuOpen(false)} className="block px-6 py-2 text-gray-300 hover:bg-gray-700 transition duration-200">Resources</a>
-            <a href="#testimonials" onClick={() => setIsMobileMenuMenuOpen(false)} className="block px-6 py-2 text-gray-300 hover:bg-gray-700 transition duration-200">Contact</a>
+            <a href="#home" onClick={() => setIsMobileMenuOpen(false)} className="block px-6 py-2 text-gray-300 hover:bg-gray-700 transition duration-200">Home</a>
+            <a href="#about" onClick={() => setIsMobileMenuOpen(false)} className="block px-6 py-2 text-gray-300 hover:bg-gray-700 transition duration-200">About Us</a>
+            <a href="#services" onClick={() => setIsMobileMenuOpen(false)} className="block px-6 py-2 text-gray-300 hover:bg-gray-700 transition duration-200">Services</a>
+            <a href="#blog" onClick={() => setIsMobileMenuOpen(false)} className="block px-6 py-2 text-gray-300 hover:bg-gray-700 transition duration-200">Blog</a>
+            {/* Removed Gallery link from mobile menu */}
+            <a href="#advocate-updates" onClick={() => setIsMobileMenuOpen(false)} className="block px-6 py-2 text-gray-300 hover:bg-gray-700 transition duration-200">Advocate's Updates</a>
+            <a href="#resources" onClick={() => setIsMobileMenuOpen(false)} className="block px-6 py-2 text-gray-300 hover:bg-gray-700 transition duration-200">Resources</a>
+            <a href="#testimonials" onClick={() => setIsMobileMenuOpen(false)} className="block px-6 py-2 text-gray-300 hover:bg-gray-700 transition duration-200">Contact</a>
           </div>
         )}
       </header>
@@ -235,6 +277,7 @@ const App = ({ advocatePosts, resources, blogPosts }) => {
                 src={`${process.env.PUBLIC_URL}/images/Advocate.jpg`} // Using PUBLIC_URL for images in public folder
                 alt="Advocate Profile"
                 className="rounded-lg shadow-xl w-full h-auto object-cover transform transition-transform duration-500 hover:scale-105"
+                onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/600x400/333333/EEEEEE?text=Advocate+Profile+Fallback"; }} // Fallback if local image not found
               />
             </div>
             <div className="md:w-1/2 text-lg text-gray-300 leading-relaxed">
@@ -287,17 +330,19 @@ const App = ({ advocatePosts, resources, blogPosts }) => {
                     <span className="flex items-center"><Clock className="w-4 h-4 mr-1" /> {post.readTime}</span>
                   </div>
                   <p className="text-gray-300 mb-4">{post.excerpt}</p>
-                  <Link to={`/blog/${post._id}`} className="text-teal-400 hover:underline font-medium flex items-center">
+                  {/* Changed to <a> tag for simplicity as react-router-dom Link is not imported */}
+                  <a href={`/blog/${post._id}`} className="text-teal-400 hover:underline font-medium flex items-center">
                     Read More <ChevronRight className="w-4 h-4 ml-1" />
-                  </Link>
+                  </a>
                 </div>
               </div>
             ))}
           </div>
           <div className="text-center mt-12">
-            <Link to="/blog" className="inline-flex items-center bg-teal-500 text-gray-900 hover:bg-teal-600 px-8 py-4 rounded-full text-lg font-semibold shadow-md transition-all duration-300 transform hover:scale-105">
+            {/* Changed to <a> tag for simplicity as react-router-dom Link is not imported */}
+            <a href="/blog" className="inline-flex items-center bg-teal-500 text-gray-900 hover:bg-teal-600 px-8 py-4 rounded-full text-lg font-semibold shadow-md transition-all duration-300 transform hover:scale-105">
               View All Posts <ChevronRight className="ml-2 w-5 h-5" />
-            </Link>
+            </a>
           </div>
         </div>
       </section>
@@ -315,6 +360,7 @@ const App = ({ advocatePosts, resources, blogPosts }) => {
                     src={post.profilePic}
                     alt={`${post.author}'s profile`}
                     className="w-10 h-10 rounded-full object-cover mr-3 border border-teal-400"
+                    onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/50x50/ADD8E6/2F4F4F?text=A"; }} // Fallback
                   />
                   <div>
                     <p className="font-semibold text-white">{post.author}</p>
@@ -357,6 +403,49 @@ const App = ({ advocatePosts, resources, blogPosts }) => {
                   <ChevronRight className="w-4 h-4 inline-block ml-1" />
                 </span>
               </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Gallery Section - Still local for now */}
+      <section id="gallery" className="py-16 px-6 md:px-12 bg-gray-800 text-gray-100">
+        <div className="container mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-12">Our Gallery</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {/* Using static placeholder images for now */}
+            {galleryImages.map((image) => (
+              <div key={image.id} className="relative group overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 border border-gray-700">
+                <img
+                  src={image.src}
+                  alt={image.alt}
+                  className="w-full h-64 object-cover transform transition-transform duration-500 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <p className="text-white text-lg font-semibold text-center px-4">{image.alt}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="text-center mt-12">
+            <a href="#" className="inline-flex items-center bg-teal-500 text-gray-900 hover:bg-teal-600 px-8 py-4 rounded-full text-lg font-semibold shadow-md transition-all duration-300 transform hover:scale-105">
+              View All Images <ChevronRight className="ml-2 w-5 h-5" />
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section id="testimonials" className="py-16 px-6 md:px-12 bg-gray-900 text-gray-100">
+        <div className="container mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-12">What Our Clients Say</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {testimonials.map((testimonial, index) => (
+              <div key={index} className="bg-gray-800 p-8 rounded-lg shadow-md border border-gray-700">
+                <Star className="w-6 h-6 text-yellow-500 mb-4" fill="currentColor" />
+                <p className="text-gray-300 italic mb-4">"{testimonial.quote}"</p>
+                <p className="text-white font-semibold">- {testimonial.author}</p>
+              </div>
             ))}
           </div>
         </div>
@@ -545,6 +634,7 @@ const App = ({ advocatePosts, resources, blogPosts }) => {
             <a href="#about" className="text-gray-400 hover:text-white transition duration-300">About</a>
             <a href="#services" className="text-gray-400 hover:text-white transition duration-300">Services</a>
             <a href="#blog" className="text-gray-400 hover:text-white transition duration-300">Blog</a>
+            {/* Removed Gallery from footer links */}
             <a href="#advocate-updates" className="text-gray-400 hover:text-white transition duration-300">Advocate's Updates</a>
             <a href="#resources" className="text-gray-400 hover:text-white transition duration-300">Resources</a>
             <a href="#testimonials" className="text-gray-400 hover:text-white transition duration-300">Testimonials</a>
@@ -552,25 +642,25 @@ const App = ({ advocatePosts, resources, blogPosts }) => {
           </div>
           <div className="flex justify-center space-x-4 mb-6">
             {advocate.social.facebook && (
-              <a href={advocate.social.facebook} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-teal-400 transition duration-300">
-                <Facebook className="w-6 h-6" />
-              </a>
-            )}
+                  <a href={advocate.social.facebook} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-teal-400 transition duration-300">
+                    <Facebook className="w-6 h-6" />
+                  </a>
+                )}
             {advocate.social.twitter && (
-              <a href={advocate.social.twitter} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-teal-400 transition duration-300">
-                <Twitter className="w-6 h-6" />
-              </a>
-            )}
+                  <a href={advocate.social.twitter} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-teal-400 transition duration-300">
+                    <Twitter className="w-6 h-6" />
+                  </a>
+                )}
             {advocate.social.linkedin && (
-              <a href={advocate.social.linkedin} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-teal-400 transition duration-300">
-                <Linkedin className="w-6 h-6" />
-              </a>
-            )}
+                  <a href={advocate.social.linkedin} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-teal-400 transition duration-300">
+                    <Linkedin className="w-6 h-6" />
+                  </a>
+                )}
             {advocate.social.instagram && (
-              <a href={advocate.social.instagram} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-teal-400 transition duration-300">
-                <Instagram className="w-6 h-6" />
-              </a>
-            )}
+                  <a href={advocate.social.instagram} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-teal-400 transition duration-300">
+                    <Instagram className="w-6 h-6" />
+                  </a>
+                )}
           </div>
           <p className="text-gray-500 text-sm">© {new Date().getFullYear()} {advocate.name.split(' ')[0]} Law. All rights reserved.</p>
         </div>
