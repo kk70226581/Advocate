@@ -12,12 +12,12 @@ const PORT = process.env.PORT || 5000;
 // If your frontend is on Vercel/Netlify, add that URL here.
 app.use(cors({
   origin: [
-    'http://localhost:3000', // For local development
+    'http://localhost:3000', // For local development (if still using)
     'http://nitishbhardwaj.site',
     'https://nitishbhardwaj.site',
-    // Add your actual deployed frontend URL(s) here, e.g.:
-    // 'https://your-frontend-app.vercel.app',
-    // 'https://your-frontend-app.netlify.app'
+    // ADD YOUR ACTUAL DEPLOYED FRONTEND URL(S) HERE:
+    'https://YOUR-ACTUAL-FRONTEND-DEPLOYED-URL.com', // Example: 'https://my-advocate-app.vercel.app'
+    // You can add multiple origins if your frontend is deployed in different places
   ],
   credentials: true
 }));
