@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import {
   LogIn, LogOut, PlusCircle, Upload, Camera, Trash2,
-  BookText, FileText, Image, UserCircle,
+  BookText, FileText, Image, UserCircle, // Re-added Image icon
   Newspaper, BookOpen, ChevronRight,
   ShieldCheck, Lock, User as UserIcon
 } from 'lucide-react';
 
 // Get the backend URL from environment variables
-
 // Use .env variable in Vercel, fallback to your production backend
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'https://nitishbhardwaj.site';
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'https://nitishbhardwaj.site'; // Ensure this is your actual deployed backend URL
 
-const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setResources, blogPosts, setBlogPosts }) => { // NEW: blogPosts and setBlogPosts props
+const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setResources, blogPosts, setBlogPosts }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -19,7 +18,7 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
 
   const advocate = {
     name: "Advocate Nitish Kumar Bhardwaj",
-    profilePic: "/images/advocate.jpg"
+    profilePic: "/images/advocate.jpg" // Assuming this image is in your public folder
   };
 
   const [newPost, setNewPost] = useState({
@@ -34,7 +33,6 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
     url: '',
   });
 
-  // NEW: State for new blog post form
   const [newBlogPost, setNewBlogPost] = useState({
     title: '',
     content: '',
@@ -47,7 +45,7 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        // Use BACKEND_URL for all fetch calls
+        // Fetch Advocate Posts
         const postsResponse = await fetch(`${BACKEND_URL}/api/posts`);
         if (!postsResponse.ok) {
             const errorText = await postsResponse.text();
@@ -56,7 +54,7 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
         const postsData = await postsResponse.json();
         setAdvocatePosts(postsData);
 
-        // Use BACKEND_URL for all fetch calls
+        // Fetch Resources
         const resourcesResponse = await fetch(`${BACKEND_URL}/api/resources`);
         if (!resourcesResponse.ok) {
             const errorText = await resourcesResponse.text();
@@ -69,34 +67,40 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
                 case 'pdf': iconComponent = <BookText className="w-10 h-10 text-teal-400" />; break;
                 case 'note': iconComponent = <FileText className="w-10 h-10 text-teal-400" />; break;
                 case 'image': iconComponent = <Image className="w-10 h-10 text-teal-400" />; break;
+                // Add other types if needed
+                case 'video': iconComponent = <Image className="w-10 h-10 text-teal-400" />; break; // Placeholder for video
+                case 'document': iconComponent = <FileText className="w-10 h-10 text-teal-400" />; break; // Placeholder for document
                 default: iconComponent = <BookText className="w-10 h-10 text-teal-400" />;
             }
             return { ...res, icon: iconComponent };
         });
         setResources(resourcesWithIcons);
 
-        // NEW: Fetch Blog Posts for Dashboard - Use BACKEND_URL
+        // Fetch Blog Posts
         const blogPostsResponse = await fetch(`${BACKEND_URL}/api/blogposts`);
         if (!blogPostsResponse.ok) {
             const errorText = await blogPostsResponse.text();
             throw new Error(`Could not fetch blog posts for dashboard: ${blogPostsResponse.status} - ${errorText.substring(0, 100)}...`);
         }
         const blogPostsData = await blogPostsResponse.json();
-        setBlogPosts(blogPostsData); // Update central state
+        setBlogPosts(blogPostsData);
 
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
+        // Display a user-friendly error message, e.g., using a state variable
+        setLoginError(`Failed to load data: ${error.message}. Please ensure the backend is running and accessible.`);
       }
     };
 
     if (isLoggedIn) {
       fetchDashboardData();
     }
-  }, [isLoggedIn, setAdvocatePosts, setResources, setBlogPosts]); // Added setBlogPosts to dependencies
+  }, [isLoggedIn, setAdvocatePosts, setResources, setBlogPosts]);
 
   const handleLogin = (e) => {
     e.preventDefault();
     setLoginError('');
+    // Simulated login: replace with actual authentication in a real app
     if (username === 'advocate' && password === 'password123') {
       setIsLoggedIn(true);
       setUsername('');
@@ -113,7 +117,7 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
     setLoginError('');
     setAdvocatePosts([]);
     setResources([]);
-    setBlogPosts([]); // NEW: Clear blog posts on logout
+    setBlogPosts([]);
     console.log("Logged out.");
   };
 
@@ -130,14 +134,14 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
     }
 
     try {
-      // Use BACKEND_URL
       const response = await fetch(`${BACKEND_URL}/api/posts`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...newPost,
           author: advocate.name,
-          profilePic: advocate.profilePic
+          profilePic: advocate.profilePic,
+          timestamp: new Date().toISOString() // Ensure timestamp is sent
         }),
       });
 
@@ -159,7 +163,6 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
   const handleDeletePost = async (id) => {
     if (window.confirm("Are you sure you want to delete this post?")) {
       try {
-        // Use BACKEND_URL
         const response = await fetch(`${BACKEND_URL}/api/posts/${id}`, {
           method: 'DELETE',
         });
@@ -189,7 +192,6 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
     }
 
     try {
-      // Use BACKEND_URL
       const response = await fetch(`${BACKEND_URL}/api/resources`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -207,6 +209,8 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
           case 'pdf': iconComponent = <BookText className="w-10 h-10 text-teal-400" />; break;
           case 'note': iconComponent = <FileText className="w-10 h-10 text-teal-400" />; break;
           case 'image': iconComponent = <Image className="w-10 h-10 text-teal-400" />; break;
+          case 'video': iconComponent = <Image className="w-10 h-10 text-teal-400" />; break; // Placeholder for video
+          case 'document': iconComponent = <FileText className="w-10 h-10 text-teal-400" />; break; // Placeholder for document
           default: iconComponent = <BookText className="w-10 h-10 text-teal-400" />;
       }
       setResources(prevResources => [{...savedResource, icon: iconComponent}, ...prevResources]);
@@ -221,7 +225,6 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
   const handleDeleteResource = async (id) => {
     if (window.confirm("Are you sure you want to delete this resource?")) {
       try {
-        // Use BACKEND_URL
         const response = await fetch(`${BACKEND_URL}/api/resources/${id}`, {
           method: 'DELETE',
         });
@@ -238,7 +241,6 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
     }
   };
 
-  // NEW: Blog Post Logic
   const handleNewBlogPostChange = (e) => {
     const { name, value } = e.target;
     setNewBlogPost(prev => ({ ...prev, [name]: value }));
@@ -252,14 +254,13 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
     }
 
     try {
-      // Use BACKEND_URL
       const response = await fetch(`${BACKEND_URL}/api/blogposts`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...newBlogPost,
-          author: newBlogPost.author || advocate.name, // Allow custom author or use default
-          date: new Date(), // Always use current date for submission
+          author: newBlogPost.author || advocate.name,
+          date: new Date().toISOString(), // Ensure date is sent as ISO string
         }),
       });
 
@@ -269,8 +270,8 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
       }
 
       const savedBlogPost = await response.json();
-      setBlogPosts(prevBlogPosts => [savedBlogPost, ...prevBlogPosts]); // Update central state
-      setNewBlogPost({ title: '', content: '', readTime: '', image: '', excerpt: '' }); // Clear form
+      setBlogPosts(prevBlogPosts => [savedBlogPost, ...prevBlogPosts]);
+      setNewBlogPost({ title: '', content: '', readTime: '', image: '', excerpt: '' });
       alert('Blog post added successfully! Check the public page.');
     } catch (error) {
       console.error("Error adding blog post:", error);
@@ -281,7 +282,6 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
   const handleDeleteBlogPost = async (id) => {
     if (window.confirm("Are you sure you want to delete this blog post?")) {
       try {
-        // Use BACKEND_URL
         const response = await fetch(`${BACKEND_URL}/api/blogposts/${id}`, {
           method: 'DELETE',
         });
@@ -426,6 +426,7 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
                         src={post.profilePic}
                         alt={`${post.author}'s profile`}
                         className="w-10 h-10 rounded-full object-cover mr-3 border border-teal-400"
+                        onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/50x50/ADD8E6/2F4F4F?text=A"; }}
                       />
                       <div>
                         <p className="font-semibold text-white">{post.author}</p>
@@ -521,7 +522,6 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
                     placeholder="5 min read"
                   />
                 </div>
-                {/* Author and Date are defaulted in backend, but could be added here if needed */}
                 <button
                   type="submit"
                   className="w-full bg-teal-500 text-gray-900 py-3 px-6 rounded-md font-semibold text-lg hover:bg-teal-600 transition-all duration-300 flex items-center justify-center space-x-2"
@@ -608,11 +608,11 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
                     <option value="note">Text Note</option>
                     <option value="image">Image</option>
                     <option value="video">Video</option>
-                    <option value="document">Other Document</option>
+                    <option value="document">General Document</option>
                   </select>
                 </div>
                 <div>
-                  <label htmlFor="newResourceUrl" className="block text-sm font-medium text-gray-300 mb-2">File URL (e.g., /documents/my_guide.pdf or external link)</label>
+                  <label htmlFor="newResourceUrl" className="block text-sm font-medium text-gray-300 mb-2">File URL (PDF/Image) or Link (Note)</label>
                   <input
                     type="url"
                     id="newResourceUrl"
@@ -620,7 +620,7 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
                     value={newResource.url}
                     onChange={handleNewResourceChange}
                     className="w-full px-4 py-3 border border-gray-600 rounded-md bg-gray-800 text-white focus:ring-teal-500 focus:border-teal-500 transition duration-200"
-                    placeholder="/documents/your_new_resource.pdf"
+                    placeholder="https://example.com/your-resource.pdf"
                     required
                   />
                 </div>
@@ -634,32 +634,38 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
               </form>
             </section>
 
-            {/* Display Resources (for dashboard view) */}
+            {/* Display Resources */}
             <section>
               <h3 className="text-2xl font-semibold text-white mb-6">Your Current Resources</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {resources.map((resource) => (
-                  <div key={resource._id} className="block bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-700 p-6 flex flex-col items-center text-center">
+                  <a
+                    key={resource._id}
+                    href={resource.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-700 p-6 flex flex-col items-center text-center"
+                  >
                     <div className="mb-4 p-3 bg-gray-700 rounded-full">{resource.icon}</div>
                     <h3 className="text-xl font-semibold text-white mb-2">{resource.title}</h3>
                     <p className="text-gray-300 text-sm mb-3">{resource.description}</p>
-                    <a href={resource.url} target="_blank" rel="noopener noreferrer" className="text-teal-400 text-sm font-medium">
+                    <span className="text-teal-400 text-sm font-medium">
                       {resource.type === 'pdf' && 'Download PDF'}
                       {resource.type === 'note' && 'View Note'}
                       {resource.type === 'image' && 'View Image'}
                       {resource.type === 'video' && 'View Video'}
                       {resource.type === 'document' && 'View Document'}
                       <ChevronRight className="w-4 h-4 inline-block ml-1" />
-                    </a>
+                    </span>
                     <div className="flex justify-end space-x-2 mt-4 w-full">
                       <button className="text-blue-400 hover:text-blue-600 transition duration-200">
                         <BookOpen className="w-5 h-5 inline-block mr-1" /> Edit
                       </button>
-                      <button onClick={() => handleDeleteResource(resource._id)} className="text-red-400 hover:text-red-600 transition duration-200">
+                      <button onClick={(e) => { e.preventDefault(); handleDeleteResource(resource._id); }} className="text-red-400 hover:text-red-600 transition duration-200">
                         <Trash2 className="w-5 h-5 inline-block mr-1" /> Delete
                       </button>
                     </div>
-                  </div>
+                  </a>
                 ))}
               </div>
             </section>
