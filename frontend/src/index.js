@@ -17,6 +17,7 @@ const RootComponent = () => {
   const [blogPosts, setBlogPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Lifted state for login status
 
   // useCallback ensures fetchAllData function reference is stable across renders
   // This is crucial for it to be a dependency of useEffect
@@ -73,7 +74,7 @@ const RootComponent = () => {
     }
   }, []); // Empty dependency array for useCallback, as fetchAllData doesn't depend on external state
 
-  // This useEffect will now re-run whenever fetchAllData is called (e.g., from dashboard)
+  // This useEffect will run on initial mount and whenever fetchAllData is called (e.g., from dashboard)
   useEffect(() => {
     fetchAllData();
   }, [fetchAllData]); // Add fetchAllData to dependency array
@@ -131,6 +132,8 @@ const RootComponent = () => {
             blogPosts={blogPosts}
             setBlogPosts={setBlogPosts}
             refreshData={fetchAllData} // Pass the refresh function
+            isLoggedIn={isLoggedIn}     // Pass isLoggedIn state
+            setIsLoggedIn={setIsLoggedIn} // Pass setIsLoggedIn setter
           />
         }
       />

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+
 import {
   LogIn, LogOut, PlusCircle, Upload, Camera, Trash2,
   BookText, FileText, Image, UserCircle,
@@ -10,9 +11,9 @@ import {
 // Use .env variable in Vercel, fallback to your production backend
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'https://advocate-zmb8.onrender.com';
 
-// AdvocateDashboard now accepts refreshData prop (which is setRefreshTrigger from RootComponent)
-const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setResources, blogPosts, setBlogPosts, refreshData }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+// AdvocateDashboard now accepts isLoggedIn and setIsLoggedIn props
+const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setResources, blogPosts, setBlogPosts, refreshData, isLoggedIn, setIsLoggedIn }) => {
+  // Removed local isLoggedIn state, now using prop
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
@@ -43,6 +44,7 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
   });
 
   // Effect to fetch data when the user logs in (initial fetch for dashboard)
+  // This useEffect will now react to the isLoggedIn prop
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
@@ -96,14 +98,14 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
     if (isLoggedIn) {
       fetchDashboardData();
     }
-  }, [isLoggedIn, setAdvocatePosts, setResources, setBlogPosts]); // refreshData is not a dependency here as it's called manually
+  }, [isLoggedIn, setAdvocatePosts, setResources, setBlogPosts]); // isLoggedIn is now a prop
 
   const handleLogin = (e) => {
     e.preventDefault();
     setLoginError('');
     // Simulated login: replace with actual authentication in a real app
     if (username === 'advocate' && password === 'password123') {
-      setIsLoggedIn(true);
+      setIsLoggedIn(true); // Use prop setter
       setUsername('');
       setPassword('');
       console.log("Logged in successfully!");
@@ -114,7 +116,7 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
   };
 
   const handleLogout = () => {
-    setIsLoggedIn(false);
+    setIsLoggedIn(false); // Use prop setter
     setLoginError('');
     setAdvocatePosts([]);
     setResources([]);
@@ -126,6 +128,7 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
     const { name, value } = e.target;
     setNewPost(prev => ({ ...prev, [name]: value }));
   };
+  
 
   const handleNewPostSubmit = async (e) => {
     e.preventDefault();
@@ -155,7 +158,7 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
       setAdvocatePosts(prevPosts => [savedPost, ...prevPosts]);
       setNewPost({ caption: '', imageUrl: '' });
       alert('Post added successfully!');
-      refreshData(prev => prev + 1); // <--- Call refreshData to increment trigger
+      refreshData(); // Call refreshData
     } catch (error) {
       console.error("Error adding post:", error);
       alert(`Failed to add post: ${error.message}`);
@@ -174,7 +177,7 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
         }
         setAdvocatePosts(prevPosts => prevPosts.filter(post => post._id !== id));
         alert('Post deleted successfully!');
-        refreshData(prev => prev + 1); // <--- Call refreshData to increment trigger
+        refreshData(); // Call refreshData
       } catch (error) {
         console.error("Error deleting post:", error);
         alert(`Failed to delete post: ${error.message}`);
@@ -219,7 +222,7 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
       setResources(prevResources => [{...savedResource, icon: iconComponent}, ...prevResources]);
       setNewResource({ title: '', description: '', type: 'pdf', url: '' });
       alert('Resource added successfully!');
-      refreshData(prev => prev + 1); // <--- Call refreshData to increment trigger
+      refreshData(); // Call refreshData
     } catch (error) {
       console.error("Error adding resource:", error);
       alert(`Failed to add resource: ${error.message}`);
@@ -238,7 +241,7 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
         }
         setResources(prevResources => prevResources.filter(resource => resource._id !== id));
         alert('Resource deleted successfully!');
-        refreshData(prev => prev + 1); // <--- Call refreshData to increment trigger
+        refreshData(); // Call refreshData
       } catch (error) {
         console.error("Error deleting resource:", error);
         alert(`Failed to delete resource: ${error.message}`);
@@ -278,7 +281,7 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
       setBlogPosts(prevBlogPosts => [savedBlogPost, ...prevBlogPosts]);
       setNewBlogPost({ title: '', content: '', readTime: '', image: '', excerpt: '' });
       alert('Blog post added successfully!');
-      refreshData(prev => prev + 1); // <--- Call refreshData to increment trigger
+      refreshData(); // Call refreshData
     } catch (error) {
       console.error("Error adding blog post:", error);
       alert(`Failed to add blog post: ${error.message}`);
@@ -297,7 +300,7 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
         }
         setBlogPosts(prevBlogPosts => prevBlogPosts.filter(post => post._id !== id));
         alert('Blog post deleted successfully!');
-        refreshData(prev => prev + 1); // <--- Call refreshData to increment trigger
+        refreshData(); // Call refreshData
       } catch (error) {
         console.error("Error deleting blog post:", error);
         alert(`Failed to delete blog post: ${error.message}`);
@@ -397,7 +400,7 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
                   ></textarea>
                 </div>
                 <div>
-                  <label htmlFor="newPostImageUrl" className="block text-sm font-medium text-gray-300 mb-2">Image URL (e.g., /images/my_new_post.jpg or an external link)</label>
+                  <label htmlFor="newPostImageUrl" className="block text-sm font-medium text-gray-300 mb-2">Image URL (e.g., /images/my_new_post.jpg)</label>
                   <div className="relative">
                     <Camera className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
                     <input
@@ -503,7 +506,7 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
                   ></textarea>
                 </div>
                 <div>
-                  <label htmlFor="newBlogPostImage" className="block text-sm font-medium text-gray-300 mb-2">Image URL (Optional)</label>
+                  <label htmlFor="newBlogPostImage" className="block text-sm font-medium text-gray-300 mb-2">Image URL (e.g., /images/blog_post_hero.jpg)</label>
                   <div className="relative">
                     <Camera className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
                     <input
@@ -513,7 +516,7 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
                       value={newBlogPost.image}
                       onChange={handleNewBlogPostChange}
                       className="w-full pl-10 pr-4 py-3 border border-gray-600 rounded-md bg-gray-800 text-white focus:ring-teal-500 focus:border-teal-500 transition duration-200"
-                      placeholder="e.g., /images/blog_post_hero.jpg or https://example.com/image.png"
+                      placeholder="e.g., /images/blog_post_hero.jpg"
                     />
                   </div>
                 </div>
@@ -558,7 +561,7 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
                       </div>
                       <div className="flex justify-end space-x-2">
                         <button className="text-blue-400 hover:text-blue-600 transition duration-200">
-                          <BookOpen className="w-5 h-5 inline-block mr-1" /> Edit
+                          <Newspaper className="w-5 h-5 inline-block mr-1" /> Edit
                         </button>
                         <button onClick={() => handleDeleteBlogPost(post._id)} className="text-red-400 hover:text-red-600 transition duration-200">
                           <Trash2 className="w-5 h-5 inline-block mr-1" /> Delete
