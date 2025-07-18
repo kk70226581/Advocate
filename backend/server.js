@@ -12,12 +12,11 @@ const PORT = process.env.PORT || 5000;
 // If your frontend is on Vercel/Netlify, add that URL here.
 app.use(cors({
   origin: [
-    'http://localhost:3000', // For local development (if still using)
+    'http://localhost:3000', // Keep this if you're developing locally
     'http://nitishbhardwaj.site',
     'https://nitishbhardwaj.site',
-    // ADD YOUR ACTUAL DEPLOYED FRONTEND URL(S) HERE:
-    'https://advocate-karans-projects-c2579268.vercel.app', // Example: 'https://my-advocate-app.vercel.app'
-    // You can add multiple origins if your frontend is deployed in different places
+    'https://www.nitishbhardwaj.site', // Your first deployed frontend URL
+    'https://advocate-karans-projects-c2579268.vercel.app', // Your second deployed frontend URL
   ],
   credentials: true
 }));
@@ -170,7 +169,8 @@ app.get('/api/blogposts/:id', async (req, res) => {
     const post = await BlogPost.findById(req.params.id);
     if (!post) return res.status(404).json({ message: 'Blog post not found' });
     res.json(post);
-  } catch (err) {
+  }
+  catch (err) {
     console.error("Error fetching single blog post:", err);
     res.status(400).json({ message: 'Invalid ID format', stack: err.stack });
   }
