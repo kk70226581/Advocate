@@ -8,8 +8,17 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Enable CORS for your frontend domain(s)
+// IMPORTANT: Ensure this 'origin' array includes the EXACT URL of your deployed frontend.
+// If your frontend is on Vercel/Netlify, add that URL here.
 app.use(cors({
-  origin: ['http://nitishbhardwaj.site', 'https://nitishbhardwaj.site'],
+  origin: [
+    'http://localhost:3000', // For local development
+    'http://nitishbhardwaj.site',
+    'https://nitishbhardwaj.site',
+    // Add your actual deployed frontend URL(s) here, e.g.:
+    // 'https://your-frontend-app.vercel.app',
+    // 'https://your-frontend-app.netlify.app'
+  ],
   credentials: true
 }));
 
@@ -25,7 +34,8 @@ mongoose.connect(process.env.MONGO_URI, {
 .catch(err => console.error('❌ MongoDB connection error:', err));
 
 // Load models
-const Test = require('./models/Test');
+// Ensure these paths are correct relative to your server.js file
+const Test = require('./models/Test'); // Assuming Test.js defines the schema for posts
 const Resource = require('./models/Resource');
 const BlogPost = require('./models/BlogPost');
 
@@ -61,7 +71,10 @@ app.post('/api/posts', async (req, res) => {
     const savedPost = await newPost.save();
     res.status(201).json(savedPost);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    // Log the full error to the console for debugging
+    console.error("Error creating post:", err);
+    // Send a more detailed error response
+    res.status(400).json({ message: err.message, stack: err.stack });
   }
 });
 
@@ -74,7 +87,8 @@ app.put('/api/posts/:id', async (req, res) => {
     if (!updated) return res.status(404).json({ message: 'Post not found' });
     res.json(updated);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    console.error("Error updating post:", err);
+    res.status(400).json({ message: err.message, stack: err.stack });
   }
 });
 
@@ -85,7 +99,8 @@ app.delete('/api/posts/:id', async (req, res) => {
     if (!deleted) return res.status(404).json({ message: 'Post not found' });
     res.json({ message: 'Post deleted successfully' });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error("Error deleting post:", err);
+    res.status(500).json({ message: err.message, stack: err.stack });
   }
 });
 
@@ -96,7 +111,8 @@ app.get('/api/resources', async (req, res) => {
     const resources = await Resource.find().sort({ createdAt: -1 });
     res.json(resources);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error("Error fetching resources:", err);
+    res.status(500).json({ message: err.message, stack: err.stack });
   }
 });
 
@@ -108,7 +124,8 @@ app.post('/api/resources', async (req, res) => {
     const saved = await newResource.save();
     res.status(201).json(saved);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    console.error("Error creating resource:", err);
+    res.status(400).json({ message: err.message, stack: err.stack });
   }
 });
 
@@ -120,7 +137,8 @@ app.put('/api/resources/:id', async (req, res) => {
     if (!updated) return res.status(404).json({ message: 'Resource not found' });
     res.json(updated);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    console.error("Error updating resource:", err);
+    res.status(400).json({ message: err.message, stack: err.stack });
   }
 });
 
@@ -130,7 +148,8 @@ app.delete('/api/resources/:id', async (req, res) => {
     if (!deleted) return res.status(404).json({ message: 'Resource not found' });
     res.json({ message: 'Resource deleted successfully' });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error("Error deleting resource:", err);
+    res.status(500).json({ message: err.message, stack: err.stack });
   }
 });
 
@@ -141,7 +160,8 @@ app.get('/api/blogposts', async (req, res) => {
     const posts = await BlogPost.find().sort({ date: -1 });
     res.json(posts);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error("Error fetching blog posts:", err);
+    res.status(500).json({ message: err.message, stack: err.stack });
   }
 });
 
@@ -151,7 +171,8 @@ app.get('/api/blogposts/:id', async (req, res) => {
     if (!post) return res.status(404).json({ message: 'Blog post not found' });
     res.json(post);
   } catch (err) {
-    res.status(400).json({ message: 'Invalid ID format' });
+    console.error("Error fetching single blog post:", err);
+    res.status(400).json({ message: 'Invalid ID format', stack: err.stack });
   }
 });
 
@@ -171,7 +192,8 @@ app.post('/api/blogposts', async (req, res) => {
     const saved = await newPost.save();
     res.status(201).json(saved);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    console.error("Error creating blog post:", err);
+    res.status(400).json({ message: err.message, stack: err.stack });
   }
 });
 
@@ -183,7 +205,8 @@ app.put('/api/blogposts/:id', async (req, res) => {
     if (!updated) return res.status(404).json({ message: 'Blog post not found' });
     res.json(updated);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    console.error("Error updating blog post:", err);
+    res.status(400).json({ message: err.message, stack: err.stack });
   }
 });
 
@@ -193,7 +216,8 @@ app.delete('/api/blogposts/:id', async (req, res) => {
     if (!deleted) return res.status(404).json({ message: 'Blog post not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error("Error deleting blog post:", err);
+    res.status(500).json({ message: err.message, stack: err.stack });
   }
 });
 
