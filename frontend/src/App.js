@@ -1,7 +1,5 @@
-import React, { useState } from 'react';
-// Removed Link import as it's not used for navigation in this file
-// Removed emailjs import as per your provided code, assuming you prefer mailto:
-
+import React, { useState, useEffect } from 'react';
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
 
 
 // Lucide React icons for a modern look
@@ -24,19 +22,12 @@ import {
   Twitter,
   Linkedin,
   Instagram,
-  Newspaper,
   CalendarDays,
-  Clock,
-  BookText,
-  FileText
+  Clock
 } from 'lucide-react';
 
 // Main App Component
 const App = ({ advocatePosts, resources, blogPosts }) => {
-  // Corrected typo: setIsMobileMenuMenuOpen -> setIsMobileMenuOpen
-
-
-
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -45,6 +36,23 @@ const App = ({ advocatePosts, resources, blogPosts }) => {
     message: '',
   });
   const [submissionStatus, setSubmissionStatus] = useState(null);
+
+  // The 'posts' state and useEffect for fetching posts are not used
+  // within the App component's JSX after the initial fetch.
+  // The 'advocatePosts' prop is now used for the Advocate's Updates section.
+  // If 'posts' was intended for another section, it needs to be integrated.
+  // For now, I'm removing it as it appears to be dummy/unused in the current render.
+  // If you later need a generic 'posts' state, you can re-add it.
+  // const [posts, setPosts] = useState([]);
+  // useEffect(() => {
+  //   fetch("https://advocate-zmb8.onrender.com/api/posts")
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       console.log("Fetched posts:", data);
+  //       setPosts(data);
+  //     })
+  //     .catch((err) => console.error("Failed to fetch posts", err));
+  // }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -219,7 +227,6 @@ const App = ({ advocatePosts, resources, blogPosts }) => {
             <a href="#about" className="text-gray-300 hover:text-teal-400 font-medium transition duration-300">About Us</a>
             <a href="#services" className="text-gray-300 hover:text-teal-400 font-medium transition duration-300">Services</a>
             <a href="#blog" className="text-gray-300 hover:text-teal-400 font-medium transition duration-300">Blog</a>
-            {/* Removed Gallery link as it's not in your current code */}
             <a href="#advocate-updates" className="text-gray-300 hover:text-teal-400 font-medium transition duration-300">Advocate's Updates</a>
             <a href="#resources" className="text-gray-300 hover:text-teal-400 font-medium transition duration-300">Resources</a>
             <a href="#testimonials" className="text-gray-300 hover:text-teal-400 font-medium transition duration-300">Testimonials</a>
@@ -238,7 +245,6 @@ const App = ({ advocatePosts, resources, blogPosts }) => {
             <a href="#about" onClick={() => setIsMobileMenuOpen(false)} className="block px-6 py-2 text-gray-300 hover:bg-gray-700 transition duration-200">About Us</a>
             <a href="#services" onClick={() => setIsMobileMenuOpen(false)} className="block px-6 py-2 text-gray-300 hover:bg-gray-700 transition duration-200">Services</a>
             <a href="#blog" onClick={() => setIsMobileMenuOpen(false)} className="block px-6 py-2 text-gray-300 hover:bg-gray-700 transition duration-200">Blog</a>
-            {/* Removed Gallery link from mobile menu */}
             <a href="#advocate-updates" onClick={() => setIsMobileMenuOpen(false)} className="block px-6 py-2 text-gray-300 hover:bg-gray-700 transition duration-200">Advocate's Updates</a>
             <a href="#resources" onClick={() => setIsMobileMenuOpen(false)} className="block px-6 py-2 text-gray-300 hover:bg-gray-700 transition duration-200">Resources</a>
             <a href="#testimonials" onClick={() => setIsMobileMenuOpen(false)} className="block px-6 py-2 text-gray-300 hover:bg-gray-700 transition duration-200">Contact</a>
@@ -372,7 +378,7 @@ const App = ({ advocatePosts, resources, blogPosts }) => {
                     <p className="text-gray-400 text-sm">{new Date(post.timestamp).toLocaleString('en-IN', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
                   </div>
                 </div>
-                <img src={post.imageUrl} alt={post.caption} className="w-full h-64 object-cover" />
+                {post.imageUrl && <img src={post.imageUrl} alt={post.caption} className="w-full h-64 object-cover" />}
                 <div className="p-4">
                   <p className="text-gray-300 mb-3 leading-relaxed">{post.caption}</p>
                 </div>
@@ -639,7 +645,6 @@ const App = ({ advocatePosts, resources, blogPosts }) => {
             <a href="#about" className="text-gray-400 hover:text-white transition duration-300">About</a>
             <a href="#services" className="text-gray-400 hover:text-white transition duration-300">Services</a>
             <a href="#blog" className="text-gray-400 hover:text-white transition duration-300">Blog</a>
-            {/* Removed Gallery from footer links */}
             <a href="#advocate-updates" className="text-gray-400 hover:text-white transition duration-300">Advocate's Updates</a>
             <a href="#resources" className="text-gray-400 hover:text-white transition duration-300">Resources</a>
             <a href="#testimonials" className="text-gray-400 hover:text-white transition duration-300">Testimonials</a>
@@ -647,25 +652,25 @@ const App = ({ advocatePosts, resources, blogPosts }) => {
           </div>
           <div className="flex justify-center space-x-4 mb-6">
             {advocate.social.facebook && (
-                  <a href={advocate.social.facebook} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-teal-400 transition duration-300">
-                    <Facebook className="w-6 h-6" />
-                  </a>
-                )}
+              <a href={advocate.social.facebook} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-teal-400 transition duration-300">
+                <Facebook className="w-6 h-6" />
+              </a>
+            )}
             {advocate.social.twitter && (
-                  <a href={advocate.social.twitter} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-teal-400 transition duration-300">
-                    <Twitter className="w-6 h-6" />
-                  </a>
-                )}
+              <a href={advocate.social.twitter} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-teal-400 transition duration-300">
+                <Twitter className="w-6 h-6" />
+              </a>
+            )}
             {advocate.social.linkedin && (
-                  <a href={advocate.social.linkedin} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-teal-400 transition duration-300">
-                    <Linkedin className="w-6 h-6" />
-                  </a>
-                )}
+              <a href={advocate.social.linkedin} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-teal-400 transition duration-300">
+                <Linkedin className="w-6 h-6" />
+              </a>
+            )}
             {advocate.social.instagram && (
-                  <a href={advocate.social.instagram} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-teal-400 transition duration-300">
-                    <Instagram className="w-6 h-6" />
-                  </a>
-                )}
+              <a href={advocate.social.instagram} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-teal-400 transition duration-300">
+                <Instagram className="w-6 h-6" />
+              </a>
+            )}
           </div>
           <p className="text-gray-500 text-sm">© {new Date().getFullYear()} {advocate.name.split(' ')[0]} Law. All rights reserved.</p>
         </div>

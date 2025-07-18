@@ -1,15 +1,16 @@
-import React, { useState, useEffect, useCallback } from 'react'; // Import useCallback
+import React, { useState, useEffect, useCallback } from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter, Routes, Route } from 'react-router-dom'; // Removed useNavigate, useLocation
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
+import { BookText, FileText, Image } from 'lucide-react'; // Ensure these are imported
 
 import './index.css';
 import App from './App';
 import AdvocateDashboard from './AdvocateDashboard';
 import BlogPostDetail from './BlogPostDetail';
-import { BookText, FileText, Image } from 'lucide-react'; // Ensure icons are imported
 
-// Define your backend URL
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'https://advocate-zmb8.onrender.com';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000'; // Default to localhost for dev
 
 const RootComponent = () => {
   const [advocatePosts, setAdvocatePosts] = useState([]);
@@ -17,10 +18,8 @@ const RootComponent = () => {
   const [blogPosts, setBlogPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [refreshTrigger, setRefreshTrigger] = useState(0); // New state to trigger data refresh
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  // fetchAllData is wrapped in useCallback to memoize it.
-  // This prevents infinite loops when it's a dependency of the useEffect below.
   const fetchAllData = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -48,15 +47,14 @@ const RootComponent = () => {
       const resourcesData = await resourcesRes.json();
       const blogPostsData = await blogPostsRes.json();
 
-      // Add icons to resources data for consistent display
       const resourcesWithIcons = resourcesData.map(res => {
           let iconComponent;
           switch (res.type) {
               case 'pdf': iconComponent = <BookText className="w-10 h-10 text-teal-400" />; break;
               case 'note': iconComponent = <FileText className="w-10 h-10 text-teal-400" />; break;
               case 'image': iconComponent = <Image className="w-10 h-10 text-teal-400" />; break;
-              case 'video': iconComponent = <Image className="w-10 h-10 text-teal-400" />; break; // Placeholder for video
-              case 'document': iconComponent = <FileText className="w-10 h-10 text-teal-400" />; break; // Placeholder for document
+              case 'video': iconComponent = <Image className="w-10 h-10 text-teal-400" />; break;
+              case 'document': iconComponent = <FileText className="w-10 h-10 text-teal-400" />; break;
               default: iconComponent = <BookText className="w-10 h-10 text-teal-400" />;
           }
           return { ...res, icon: iconComponent };
@@ -72,12 +70,11 @@ const RootComponent = () => {
       setError(err.message);
       setLoading(false);
     }
-  }, []); // fetchAllData itself has no dependencies, so it's stable
+  }, []);
 
-  // This useEffect will run on initial mount and whenever refreshTrigger changes
   useEffect(() => {
     fetchAllData();
-  }, [fetchAllData, refreshTrigger]); // Added refreshTrigger to dependency array
+  }, [fetchAllData, refreshTrigger]);
 
   if (loading) {
     return (
@@ -103,8 +100,9 @@ const RootComponent = () => {
   }
 
   return (
+    // Routes are defined here, nested correctly
     <Routes>
-      {/* Public-facing routes */}
+      {/* Route for the public home page */}
       <Route
         path="/"
         element={
@@ -115,12 +113,12 @@ const RootComponent = () => {
           />
         }
       />
-      {/* Dynamic route for individual blog post */}
+      {/* Route for the individual blog post detail page */}
       <Route
         path="/blog/:id"
         element={<BlogPostDetail blogPosts={blogPosts} />}
       />
-      {/* Dashboard route */}
+      {/* Route for the Advocate Dashboard */}
       <Route
         path="/dashboard"
         element={
@@ -131,10 +129,12 @@ const RootComponent = () => {
             setResources={setResources}
             blogPosts={blogPosts}
             setBlogPosts={setBlogPosts}
-            refreshData={setRefreshTrigger} // Pass the setter function
+            refreshData={() => setRefreshTrigger(prev => prev + 1)}
           />
         }
       />
+      {/* You can add a 404 Not Found route here if needed */}
+      {/* <Route path="*" element={<NotFoundPage />} /> */}
     </Routes>
   );
 };
@@ -142,7 +142,7 @@ const RootComponent = () => {
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <BrowserRouter> {/* BrowserRouter now wraps the RootComponent */}
+    <BrowserRouter> {/* BrowserRouter should wrap the entire RootComponent */}
       <RootComponent />
     </BrowserRouter>
   </React.StrictMode>
