@@ -1,42 +1,41 @@
-// frontend/src/BlogPostDetail.js
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, CalendarDays, Clock, Home } from 'lucide-react'; // Import icons
 
 const BlogPostDetail = ({ blogPosts }) => { // Receives all blogPosts to find next/prev
   const { id } = useParams(); // Get the ID from the URL
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // Not directly used for navigation in this component, but good to keep if needed later
   const [blogPost, setBlogPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchBlogPost = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await fetch(`http://localhost:5000/api/blogposts/${id}`);
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`Failed to fetch blog post: ${response.status} - ${errorText.substring(0, 100)}...`);
-        }
-        const data = await response.json();
-        setBlogPost(data);
-      } catch (err) {
-        console.error("Error fetching single blog post:", err);
-        setError(err.message);
-      } finally {
+    // Check if blogPosts array is available and not empty
+    if (blogPosts && blogPosts.length > 0) {
+      const foundPost = blogPosts.find(post => post._id === id);
+      if (foundPost) {
+        setBlogPost(foundPost);
+        setLoading(false);
+      } else {
+        // If post not found in the array, it might be an invalid ID or still loading
+        setError("Blog post not found or data not yet available.");
         setLoading(false);
       }
-    };
+    } else {
+      // If blogPosts array is empty, it means RootComponent is still loading or there are no posts
+      // In a real application, you might add a fallback fetch here if the post might not be in the initial list
+      // For this setup, we assume RootComponent provides all necessary blogPosts.
+      setLoading(false); // Set loading to false as we've checked the prop
+      setError("No blog posts loaded or post not found.");
+    }
+  }, [id, blogPosts]); // Re-run when ID or the blogPosts prop changes
 
-    fetchBlogPost();
-  }, [id]); // Re-fetch whenever the ID in the URL changes
-
-  // Logic to find next and previous blog posts
+  // Logic to find next and previous blog posts for navigation
+  // Ensure blogPosts is sorted if you want consistent next/prev behavior
   const currentIndex = blogPosts.findIndex(post => post._id === id);
   const prevPost = currentIndex > 0 ? blogPosts[currentIndex - 1] : null;
-  const nextPost = currentIndex < blogPosts.length - 1 ? blogPosts[currentIndex + 1] : null;
+  const nextPost = currentIndex !== -1 && currentIndex < blogPosts.length - 1 ? blogPosts[currentIndex + 1] : null;
+
 
   if (loading) {
     return (
@@ -101,7 +100,7 @@ const BlogPostDetail = ({ blogPosts }) => { // Receives all blogPosts to find ne
           </div>
 
           <div className="prose prose-invert prose-lg max-w-none text-gray-300 leading-relaxed">
-            {/* Using dangerouslySetInnerHTML for content, be careful if content comes from untrusted sources */}
+            {/* Using dangerouslySetInnerHTML for content. Be careful if content comes from untrusted sources. */}
             <p className="mb-4 text-lg font-semibold italic">{blogPost.excerpt}</p>
             <div dangerouslySetInnerHTML={{ __html: blogPost.content }}></div>
           </div>
