@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom'; // Import useNavigate
-import { BookText, FileText, Image } from 'lucide-react'; // Import icons needed for resource rendering in index.js
+import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom'; // Import useLocation
+import { BookText, FileText, Image } from 'lucide-react';
 
 import './index.css';
 import App from './App';
 import AdvocateDashboard from './AdvocateDashboard';
-import BlogPostDetail from './BlogPostDetail'; // NEW: Import the new component
+import BlogPostDetail from './BlogPostDetail';
 
 // Define your backend URL (using the one you provided)
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'https://advocate-zmb8.onrender.com';
@@ -17,6 +17,7 @@ const RootComponent = () => {
   const [blogPosts, setBlogPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const location = useLocation(); // Get the current location object
 
   // Function to fetch all data from the backend
   const fetchAllData = async () => {
@@ -72,10 +73,10 @@ const RootComponent = () => {
     }
   };
 
-  // Fetch data once on initial mount
+  // Fetch data on initial mount AND whenever the route changes
   useEffect(() => {
     fetchAllData();
-  }, []);
+  }, [location.pathname]); // <--- KEY CHANGE: Added location.pathname to dependency array
 
   if (loading) {
     return (
@@ -115,10 +116,10 @@ const RootComponent = () => {
               />
             }
           />
-          {/* NEW: Dynamic route for individual blog post */}
+          {/* Dynamic route for individual blog post */}
           <Route
             path="/blog/:id"
-            element={<BlogPostDetail blogPosts={blogPosts} />} // Pass full list for next/prev navigation
+            element={<BlogPostDetail blogPosts={blogPosts} />}
           />
           {/* Dashboard route */}
           <Route
