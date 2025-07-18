@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { HashRouter as Router, Routes, Route } from "react-router-dom";
-
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom'; // Import Link
 
 // Lucide React icons for a modern look
 import {
@@ -22,13 +21,17 @@ import {
   Twitter,
   Linkedin,
   Instagram,
+  Newspaper, // For Blog/Posts
+  Image,     // For Gallery/Images (though gallery is static)
   CalendarDays,
-  Clock
+  Clock,
+  BookText,   // For PDF/Document resources
+  FileText    // For notes/text resources
 } from 'lucide-react';
 
 // Main App Component
 const App = ({ advocatePosts, resources, blogPosts }) => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // Corrected typo
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -36,23 +39,6 @@ const App = ({ advocatePosts, resources, blogPosts }) => {
     message: '',
   });
   const [submissionStatus, setSubmissionStatus] = useState(null);
-
-  // The 'posts' state and useEffect for fetching posts are not used
-  // within the App component's JSX after the initial fetch.
-  // The 'advocatePosts' prop is now used for the Advocate's Updates section.
-  // If 'posts' was intended for another section, it needs to be integrated.
-  // For now, I'm removing it as it appears to be dummy/unused in the current render.
-  // If you later need a generic 'posts' state, you can re-add it.
-  // const [posts, setPosts] = useState([]);
-  // useEffect(() => {
-  //   fetch("https://advocate-zmb8.onrender.com/api/posts")
-  //     .then((res) => res.json())
-  //     .then((data) => {
-  //       console.log("Fetched posts:", data);
-  //       setPosts(data);
-  //     })
-  //     .catch((err) => console.error("Failed to fetch posts", err));
-  // }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -220,7 +206,8 @@ const App = ({ advocatePosts, resources, blogPosts }) => {
         <nav className="container mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-2">
             <Scale className="w-8 h-8 text-teal-400" />
-            <a href="#" className="text-2xl font-bold text-white">{advocate.name.split(' ')[0]} Law</a>
+            {/* Use Link for internal navigation */}
+            <Link to="/" className="text-2xl font-bold text-white">{advocate.name.split(' ')[0]} Law</Link>
           </div>
           <div className="hidden md:flex space-x-8">
             <a href="#home" className="text-gray-300 hover:text-teal-400 font-medium transition duration-300">Home</a>
@@ -341,19 +328,19 @@ const App = ({ advocatePosts, resources, blogPosts }) => {
                     <span className="flex items-center"><Clock className="w-4 h-4 mr-1" /> {post.readTime}</span>
                   </div>
                   <p className="text-gray-300 mb-4">{post.excerpt}</p>
-                  {/* Changed to <a> tag for simplicity as react-router-dom Link is not imported */}
-                  <a href={`/blog/${post._id}`} className="text-teal-400 hover:underline font-medium flex items-center">
+                  {/* Changed to Link component */}
+                  <Link to={`/blog/${post._id}`} className="text-teal-400 hover:underline font-medium flex items-center">
                     Read More <ChevronRight className="w-4 h-4 ml-1" />
-                  </a>
+                  </Link>
                 </div>
               </div>
             ))}
           </div>
           <div className="text-center mt-12">
-            {/* Changed to <a> tag for simplicity as react-router-dom Link is not imported */}
-            <a href="/blog" className="inline-flex items-center bg-teal-500 text-gray-900 hover:bg-teal-600 px-8 py-4 rounded-full text-lg font-semibold shadow-md transition-all duration-300 transform hover:scale-105">
+            {/* Changed to Link component */}
+            <Link to="/blog" className="inline-flex items-center bg-teal-500 text-gray-900 hover:bg-teal-600 px-8 py-4 rounded-full text-lg font-semibold shadow-md transition-all duration-300 transform hover:scale-105">
               View All Posts <ChevronRight className="ml-2 w-5 h-5" />
-            </a>
+            </Link>
           </div>
         </div>
       </section>
@@ -378,7 +365,7 @@ const App = ({ advocatePosts, resources, blogPosts }) => {
                     <p className="text-gray-400 text-sm">{new Date(post.timestamp).toLocaleString('en-IN', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
                   </div>
                 </div>
-                {post.imageUrl && <img src={post.imageUrl} alt={post.caption} className="w-full h-64 object-cover" />}
+                <img src={post.imageUrl} alt={post.caption} className="w-full h-64 object-cover" />
                 <div className="p-4">
                   <p className="text-gray-300 mb-3 leading-relaxed">{post.caption}</p>
                 </div>
@@ -652,25 +639,25 @@ const App = ({ advocatePosts, resources, blogPosts }) => {
           </div>
           <div className="flex justify-center space-x-4 mb-6">
             {advocate.social.facebook && (
-              <a href={advocate.social.facebook} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-teal-400 transition duration-300">
-                <Facebook className="w-6 h-6" />
-              </a>
-            )}
+                  <a href={advocate.social.facebook} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-teal-400 transition duration-300">
+                    <Facebook className="w-6 h-6" />
+                  </a>
+                )}
             {advocate.social.twitter && (
-              <a href={advocate.social.twitter} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-teal-400 transition duration-300">
-                <Twitter className="w-6 h-6" />
-              </a>
-            )}
+                  <a href={advocate.social.twitter} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-teal-400 transition duration-300">
+                    <Twitter className="w-6 h-6" />
+                  </a>
+                )}
             {advocate.social.linkedin && (
-              <a href={advocate.social.linkedin} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-teal-400 transition duration-300">
-                <Linkedin className="w-6 h-6" />
-              </a>
-            )}
+                  <a href={advocate.social.linkedin} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-teal-400 transition duration-300">
+                    <Linkedin className="w-6 h-6" />
+                  </a>
+                )}
             {advocate.social.instagram && (
-              <a href={advocate.social.instagram} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-teal-400 transition duration-300">
-                <Instagram className="w-6 h-6" />
-              </a>
-            )}
+                  <a href={advocate.social.instagram} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-teal-400 transition duration-300">
+                    <Instagram className="w-6 h-6" />
+                  </a>
+                )}
           </div>
           <p className="text-gray-500 text-sm">© {new Date().getFullYear()} {advocate.name.split(' ')[0]} Law. All rights reserved.</p>
         </div>
