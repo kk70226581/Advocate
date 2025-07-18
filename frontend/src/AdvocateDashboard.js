@@ -6,6 +6,9 @@ import {
   ShieldCheck, Lock, User as UserIcon
 } from 'lucide-react';
 
+// Get the backend URL from environment variables
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setResources, blogPosts, setBlogPosts }) => { // NEW: blogPosts and setBlogPosts props
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
@@ -42,7 +45,8 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const postsResponse = await fetch('http://localhost:5000/api/posts');
+        // Use BACKEND_URL for all fetch calls
+        const postsResponse = await fetch(`${BACKEND_URL}/api/posts`);
         if (!postsResponse.ok) {
             const errorText = await postsResponse.text();
             throw new Error(`Could not fetch posts for dashboard: ${postsResponse.status} - ${errorText.substring(0, 100)}...`);
@@ -50,7 +54,8 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
         const postsData = await postsResponse.json();
         setAdvocatePosts(postsData);
 
-        const resourcesResponse = await fetch('http://localhost:5000/api/resources');
+        // Use BACKEND_URL for all fetch calls
+        const resourcesResponse = await fetch(`${BACKEND_URL}/api/resources`);
         if (!resourcesResponse.ok) {
             const errorText = await resourcesResponse.text();
             throw new Error(`Could not fetch resources for dashboard: ${resourcesResponse.status} - ${errorText.substring(0, 100)}...`);
@@ -68,8 +73,8 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
         });
         setResources(resourcesWithIcons);
 
-        // NEW: Fetch Blog Posts for Dashboard
-        const blogPostsResponse = await fetch('http://localhost:5000/api/blogposts');
+        // NEW: Fetch Blog Posts for Dashboard - Use BACKEND_URL
+        const blogPostsResponse = await fetch(`${BACKEND_URL}/api/blogposts`);
         if (!blogPostsResponse.ok) {
             const errorText = await blogPostsResponse.text();
             throw new Error(`Could not fetch blog posts for dashboard: ${blogPostsResponse.status} - ${errorText.substring(0, 100)}...`);
@@ -123,7 +128,8 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/posts', {
+      // Use BACKEND_URL
+      const response = await fetch(`${BACKEND_URL}/api/posts`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -151,7 +157,8 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
   const handleDeletePost = async (id) => {
     if (window.confirm("Are you sure you want to delete this post?")) {
       try {
-        const response = await fetch(`http://localhost:5000/api/posts/${id}`, {
+        // Use BACKEND_URL
+        const response = await fetch(`${BACKEND_URL}/api/posts/${id}`, {
           method: 'DELETE',
         });
         if (!response.ok) {
@@ -180,7 +187,8 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/resources', {
+      // Use BACKEND_URL
+      const response = await fetch(`${BACKEND_URL}/api/resources`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newResource),
@@ -211,7 +219,8 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
   const handleDeleteResource = async (id) => {
     if (window.confirm("Are you sure you want to delete this resource?")) {
       try {
-        const response = await fetch(`http://localhost:5000/api/resources/${id}`, {
+        // Use BACKEND_URL
+        const response = await fetch(`${BACKEND_URL}/api/resources/${id}`, {
           method: 'DELETE',
         });
         if (!response.ok) {
@@ -241,7 +250,8 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/blogposts', {
+      // Use BACKEND_URL
+      const response = await fetch(`${BACKEND_URL}/api/blogposts`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -269,7 +279,8 @@ const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setReso
   const handleDeleteBlogPost = async (id) => {
     if (window.confirm("Are you sure you want to delete this blog post?")) {
       try {
-        const response = await fetch(`http://localhost:5000/api/blogposts/${id}`, {
+        // Use BACKEND_URL
+        const response = await fetch(`${BACKEND_URL}/api/blogposts/${id}`, {
           method: 'DELETE',
         });
         if (!response.ok) {
