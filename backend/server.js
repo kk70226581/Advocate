@@ -16,7 +16,7 @@ app.use(cors({
     'http://nitishbhardwaj.site',
     'https://nitishbhardwaj.site',
     // ADD YOUR ACTUAL DEPLOYED FRONTEND URL(S) HERE:
-    'https://YOUR-ACTUAL-FRONTEND-DEPLOYED-URL.com', // Example: 'https://my-advocate-app.vercel.app'
+    'https://advocate-karans-projects-c2579268.vercel.app', // Example: 'https://my-advocate-app.vercel.app'
     // You can add multiple origins if your frontend is deployed in different places
   ],
   credentials: true
