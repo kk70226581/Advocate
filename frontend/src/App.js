@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 // Removed Link import as it's not used for navigation in this file
 // Removed emailjs import as per your provided code, assuming you prefer mailto:
+import React, { useEffect, useState } from "react";
+
 
 // Lucide React icons for a modern look
 import {
@@ -32,6 +34,26 @@ import {
 // Main App Component
 const App = ({ advocatePosts, resources, blogPosts }) => {
   // Corrected typo: setIsMobileMenuMenuOpen -> setIsMobileMenuOpen
+
+
+
+
+  const [posts, setPosts] = useState([]); // ✅ <-- This replaces dummyPosts
+
+  useEffect(() => {
+    fetch("https://advocate-zmb8.onrender.com/api/posts")
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("Fetched posts:", data);
+        setPosts(data);
+      })
+      .catch((err) => console.error("Failed to fetch posts", err));
+  }, []);
+
+
+
+  
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
