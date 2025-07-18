@@ -7,7 +7,9 @@ import {
 } from 'lucide-react';
 
 // Get the backend URL from environment variables
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
+// Use .env variable in Vercel, fallback to your production backend
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'https://nitishbhardwaj.site';
 
 const AdvocateDashboard = ({ advocatePosts, setAdvocatePosts, resources, setResources, blogPosts, setBlogPosts }) => { // NEW: blogPosts and setBlogPosts props
   const [isLoggedIn, setIsLoggedIn] = useState(false);
