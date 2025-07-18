@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react'; // Import useCallback
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom'; // Import useLocation
-import { BookText, FileText, Image } from 'lucide-react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom'; // Removed useNavigate, useLocation
 
 import './index.css';
 import App from './App';
 import AdvocateDashboard from './AdvocateDashboard';
 import BlogPostDetail from './BlogPostDetail';
+import { BookText, FileText, Image } from 'lucide-react'; // Ensure icons are imported
 
-// Define your backend URL (using the one you provided)
+// Define your backend URL
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'https://advocate-zmb8.onrender.com';
 
 const RootComponent = () => {
@@ -17,10 +17,11 @@ const RootComponent = () => {
   const [blogPosts, setBlogPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const location = useLocation(); // Get the current location object
+  const [refreshTrigger, setRefreshTrigger] = useState(0); // New state to trigger data refresh
 
-  // Function to fetch all data from the backend
-  const fetchAllData = async () => {
+  // fetchAllData is wrapped in useCallback to memoize it.
+  // This prevents infinite loops when it's a dependency of the useEffect below.
+  const fetchAllData = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -36,11 +37,11 @@ const RootComponent = () => {
       }
       if (!resourcesRes.ok) {
           const errorText = await resourcesRes.text();
-          throw new Error(`Failed to fetch resources: ${resourcesRes.status} - ${errorText.substring(0, 100)}...`);
+          throw new Error(`Could not fetch resources: ${resourcesRes.status} - ${errorText.substring(0, 100)}...`);
       }
       if (!blogPostsRes.ok) {
           const errorText = await blogPostsRes.text();
-          throw new Error(`Failed to fetch blog posts: ${blogPostsRes.status} - ${errorText.substring(0, 100)}...`);
+          throw new Error(`Could not fetch blog posts: ${blogPostsRes.status} - ${errorText.substring(0, 100)}...`);
       }
 
       const postsData = await postsRes.json();
@@ -67,16 +68,16 @@ const RootComponent = () => {
       setLoading(false);
 
     } catch (err) {
-      console.error("Error fetching initial data for RootComponent:", err);
+      console.error("Error fetching data:", err);
       setError(err.message);
       setLoading(false);
     }
-  };
+  }, []); // fetchAllData itself has no dependencies, so it's stable
 
-  // Fetch data on initial mount AND whenever the route changes
+  // This useEffect will run on initial mount and whenever refreshTrigger changes
   useEffect(() => {
     fetchAllData();
-  }, [location.pathname]); // <--- KEY CHANGE: Added location.pathname to dependency array
+  }, [fetchAllData, refreshTrigger]); // Added refreshTrigger to dependency array
 
   if (loading) {
     return (
@@ -102,45 +103,47 @@ const RootComponent = () => {
   }
 
   return (
-    <React.StrictMode>
-      <BrowserRouter>
-        <Routes>
-          {/* Public-facing routes */}
-          <Route
-            path="/"
-            element={
-              <App
-                advocatePosts={advocatePosts}
-                resources={resources}
-                blogPosts={blogPosts}
-              />
-            }
+    <Routes>
+      {/* Public-facing routes */}
+      <Route
+        path="/"
+        element={
+          <App
+            advocatePosts={advocatePosts}
+            resources={resources}
+            blogPosts={blogPosts}
           />
-          {/* Dynamic route for individual blog post */}
-          <Route
-            path="/blog/:id"
-            element={<BlogPostDetail blogPosts={blogPosts} />}
+        }
+      />
+      {/* Dynamic route for individual blog post */}
+      <Route
+        path="/blog/:id"
+        element={<BlogPostDetail blogPosts={blogPosts} />}
+      />
+      {/* Dashboard route */}
+      <Route
+        path="/dashboard"
+        element={
+          <AdvocateDashboard
+            advocatePosts={advocatePosts}
+            setAdvocatePosts={setAdvocatePosts}
+            resources={resources}
+            setResources={setResources}
+            blogPosts={blogPosts}
+            setBlogPosts={setBlogPosts}
+            refreshData={setRefreshTrigger} // Pass the setter function
           />
-          {/* Dashboard route */}
-          <Route
-            path="/dashboard"
-            element={
-              <AdvocateDashboard
-                advocatePosts={advocatePosts}
-                setAdvocatePosts={setAdvocatePosts}
-                resources={resources}
-                setResources={setResources}
-                blogPosts={blogPosts}
-                setBlogPosts={setBlogPosts}
-                refreshData={fetchAllData} // Pass the refresh function
-              />
-            }
-          />
-        </Routes>
-      </BrowserRouter>
-    </React.StrictMode>
+        }
+      />
+    </Routes>
   );
 };
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<RootComponent />);
+root.render(
+  <React.StrictMode>
+    <BrowserRouter> {/* BrowserRouter now wraps the RootComponent */}
+      <RootComponent />
+    </BrowserRouter>
+  </React.StrictMode>
+);
