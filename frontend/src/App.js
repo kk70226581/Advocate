@@ -272,7 +272,7 @@ const App = ({ advocatePosts, resources, blogPosts }) => {
           <div className="flex flex-col md:flex-row items-center md:space-x-12">
             <div className="md:w-1/2 mb-8 md:mb-0">
               <img
-                src={`${process.env.PUBLIC_URL}/images/Advocate.jpg`} // Using PUBLIC_URL for images in public folder
+                src="/images/Advocate.jpg" // Changed to direct absolute path
                 alt="Advocate Profile"
                 className="rounded-lg shadow-xl w-full h-auto object-cover transform transition-transform duration-500 hover:scale-105"
                 onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/600x400/333333/EEEEEE?text=Advocate+Profile+Fallback"; }} // Fallback if local image not found
