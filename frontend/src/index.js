@@ -1,16 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-
-import { BookText, FileText, Image } from 'lucide-react'; // Ensure these are imported
+import { BookText, FileText, Image } from 'lucide-react'; // Ensure icons are imported
 
 import './index.css';
 import App from './App';
 import AdvocateDashboard from './AdvocateDashboard';
 import BlogPostDetail from './BlogPostDetail';
 
-
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000'; // Default to localhost for dev
+// Define your backend URL
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'https://advocate-zmb8.onrender.com';
 
 const RootComponent = () => {
   const [advocatePosts, setAdvocatePosts] = useState([]);
@@ -18,8 +17,9 @@ const RootComponent = () => {
   const [blogPosts, setBlogPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
+  // useCallback ensures fetchAllData function reference is stable across renders
+  // This is crucial for it to be a dependency of useEffect
   const fetchAllData = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -47,14 +47,15 @@ const RootComponent = () => {
       const resourcesData = await resourcesRes.json();
       const blogPostsData = await blogPostsRes.json();
 
+      // Add icons to resources data for consistent display
       const resourcesWithIcons = resourcesData.map(res => {
           let iconComponent;
           switch (res.type) {
               case 'pdf': iconComponent = <BookText className="w-10 h-10 text-teal-400" />; break;
               case 'note': iconComponent = <FileText className="w-10 h-10 text-teal-400" />; break;
               case 'image': iconComponent = <Image className="w-10 h-10 text-teal-400" />; break;
-              case 'video': iconComponent = <Image className="w-10 h-10 text-teal-400" />; break;
-              case 'document': iconComponent = <FileText className="w-10 h-10 text-teal-400" />; break;
+              case 'video': iconComponent = <Image className="w-10 h-10 text-teal-400" />; break; // Placeholder for video
+              case 'document': iconComponent = <FileText className="w-10 h-10 text-teal-400" />; break; // Placeholder for document
               default: iconComponent = <BookText className="w-10 h-10 text-teal-400" />;
           }
           return { ...res, icon: iconComponent };
@@ -66,15 +67,16 @@ const RootComponent = () => {
       setLoading(false);
 
     } catch (err) {
-      console.error("Error fetching data:", err);
+      console.error("Error fetching initial data for RootComponent:", err);
       setError(err.message);
       setLoading(false);
     }
-  }, []);
+  }, []); // Empty dependency array for useCallback, as fetchAllData doesn't depend on external state
 
+  // This useEffect will now re-run whenever fetchAllData is called (e.g., from dashboard)
   useEffect(() => {
     fetchAllData();
-  }, [fetchAllData, refreshTrigger]);
+  }, [fetchAllData]); // Add fetchAllData to dependency array
 
   if (loading) {
     return (
@@ -100,9 +102,8 @@ const RootComponent = () => {
   }
 
   return (
-    // Routes are defined here, nested correctly
     <Routes>
-      {/* Route for the public home page */}
+      {/* Public-facing routes */}
       <Route
         path="/"
         element={
@@ -113,12 +114,12 @@ const RootComponent = () => {
           />
         }
       />
-      {/* Route for the individual blog post detail page */}
+      {/* Dynamic route for individual blog post */}
       <Route
         path="/blog/:id"
         element={<BlogPostDetail blogPosts={blogPosts} />}
       />
-      {/* Route for the Advocate Dashboard */}
+      {/* Dashboard route */}
       <Route
         path="/dashboard"
         element={
@@ -129,12 +130,10 @@ const RootComponent = () => {
             setResources={setResources}
             blogPosts={blogPosts}
             setBlogPosts={setBlogPosts}
-            refreshData={() => setRefreshTrigger(prev => prev + 1)}
+            refreshData={fetchAllData} // Pass the refresh function
           />
         }
       />
-      {/* You can add a 404 Not Found route here if needed */}
-      {/* <Route path="*" element={<NotFoundPage />} /> */}
     </Routes>
   );
 };
@@ -142,7 +141,7 @@ const RootComponent = () => {
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <BrowserRouter> {/* BrowserRouter should wrap the entire RootComponent */}
+    <BrowserRouter> {/* BrowserRouter now correctly wraps the RootComponent */}
       <RootComponent />
     </BrowserRouter>
   </React.StrictMode>
